@@ -1,8 +1,11 @@
 <script>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { marked } from 'marked'
 import CardList from './components/CardList.vue'
 import CoverEditor from './components/CoverEditor.vue'
+import JSZip from 'jszip'
+import { saveAs } from 'file-saver'
+import html2canvas from 'html2canvas'
 
 export default {
   name: 'App',
@@ -12,7 +15,27 @@ export default {
   },
   setup() {
     const newsContent = ref('')
-    const markdownContent = ref('')
+    const markdownContent = ref(`# 💥 仟流Card使用指南
+**支持格式+实操案例演示**
+本工具支持普通文本和Markdown文本一键转换为小红书卡片。
+大家可以用空行和字号调节自行调节卡片内容分布。
+
+##  爆款小红书结构示例 👀
+**标题公式**：  
+- 痛点+数字："90%人不知道的排版雷区"  
+- 场景+结果："早餐这样拍🔥赞藏破万"  
+- 悬念+对比："你的封面为什么没流量？"
+
+## 🔥 高互动内容框架
+1️⃣ **价值金字塔**：  
+   ⭐️ 顶层：**7天涨粉1W**（结果驱动）  
+   ⭐️ 中层：3个排版误区+5个解决方案  
+   ⭐️ 底层：实操案例对比图（before/after）
+
+2️⃣ **符号排版法**：  
+   ➡️ 用◆分割内容模块  
+   ➡️ 用⭐️标注核心卖点  
+   ➡️ 用✅展示功能清单`)
     const currentStyle = ref('default')
     const currentTextAlign = ref('left')
     const currentFontSize = ref(16)
@@ -183,50 +206,77 @@ export default {
         progressDiv.innerHTML = `<div>正在生成卡片 <span id="progress">0/${cards.length}</span></div>`
         document.body.appendChild(progressDiv)
         
-        for (let i = 0; i < cards.length; i++) {
-          // 更新进度
-          document.getElementById('progress').textContent = `${i+1}/${cards.length}`
-          
-          const cardElement = document.querySelector(`.card:nth-child(${i + 1})`)
-          if (!cardElement) continue
-          
-          // 临时隐藏按钮
-          const buttons = cardElement.querySelectorAll('.download-btn, .delete-btn')
-          buttons.forEach(btn => btn.style.display = 'none')
-          
-          const canvas = await html2canvas(cardElement, {
-            scale: 4,
-            backgroundColor: null,
-            useCORS: true
-          })
-          
-          // 恢复按钮显示
-          buttons.forEach(btn => btn.style.display = '')
-          
-          // 将canvas转换为blob并添加到zip
-          const blob = await new Promise(resolve => canvas.toBlob(resolve))
-          imgFolder.file(`小红书卡片-${i+1}.png`, blob)
-          
-          // 每处理3张卡片暂停一下，避免浏览器卡顿
-          if ((i + 1) % 3 === 0) {
-            await new Promise(resolve => setTimeout(resolve, 100))
+        try {
+          for (let i = 0; i < cards.length; i++) {
+            // 更新进度
+            document.getElementById('progress').textContent = `${i+1}/${cards.length}`
+            
+            const cardElement = document.querySelector(`.card:nth-child(${i + 1})`)
+            if (!cardElement) {
+              console.warn(`找不到第 ${i + 1} 个卡片元素`);
+              continue;
+            }
+
+            // 临时隐藏按钮
+            const buttons = cardElement.querySelectorAll('.download-btn, .delete-btn, .card-actions')
+            buttons.forEach(btn => btn.style.display = 'none')
+
+            try {
+              // 生成图片
+              const canvas = await html2canvas(cardElement, {
+                scale: 4,
+                backgroundColor: null,
+                useCORS: true,
+                allowTaint: true,
+                logging: true,
+                onclone: function(clonedDoc) {
+                  // 在克隆的文档中也隐藏按钮
+                  const clonedButtons = clonedDoc.querySelectorAll('.download-btn, .delete-btn, .card-actions')
+                  clonedButtons.forEach(btn => btn.style.display = 'none')
+                }
+              })
+
+              // 恢复按钮显示
+              buttons.forEach(btn => btn.style.display = '')
+
+              // 将canvas转换为blob并添加到zip
+              const blob = await new Promise(resolve => canvas.toBlob(resolve))
+              imgFolder.file(`小红书卡片-${i+1}.png`, blob)
+
+              // 每处理3张卡片暂停一下，避免浏览器卡顿
+              if ((i + 1) % 3 === 0) {
+                await new Promise(resolve => setTimeout(resolve, 100))
+              }
+            } catch (cardError) {
+              console.error(`处理第 ${i + 1} 张卡片时出错:`, cardError)
+              // 恢复按钮显示
+              buttons.forEach(btn => btn.style.display = '')
+            }
           }
+          
+          // 生成并下载zip文件
+          progressDiv.innerHTML = `<div>正在打包下载...</div>`
+          const content = await zip.generateAsync({ type: 'blob' })
+          saveAs(content, `小红书卡片集合-${Date.now()}.zip`)
+          console.log('下载完成')
+        } finally {
+          // 移除进度提示
+          setTimeout(() => {
+            if (progressDiv.parentNode) {
+              document.body.removeChild(progressDiv)
+            }
+          }, 1000)
         }
-        
-        // 生成并下载zip文件
-        progressDiv.innerHTML = `<div>正在打包下载...</div>`
-        const content = await zip.generateAsync({ type: 'blob' })
-        saveAs(content, `小红书卡片集合-${Date.now()}.zip`)
-        
-        // 移除进度提示
-        setTimeout(() => {
-          document.body.removeChild(progressDiv)
-        }, 1000)
       } catch (error) {
         console.error('批量下载失败:', error)
-        alert('批量下载失败，请重试')
+        alert('批量下载失败，错误信息：' + error.message)
       }
     }
+
+    // 在组件挂载后立即处理初始内容
+    onMounted(() => {
+      processInput()
+    })
 
     return {
       newsContent,

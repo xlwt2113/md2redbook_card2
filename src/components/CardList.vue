@@ -5,6 +5,7 @@
       :key="index"
       class="card"
       :class="[currentStyle, { 'cover-card': card.isCover }]"
+      :ref="el => { if (el) cardRefs[index] = el }"
     >
       <div class="card-content" :class="{ 'cover-card': card.isCover }">
         <!-- 普通卡片内容 -->
@@ -111,23 +112,28 @@
       <!-- 卡片操作按钮 -->
       <div class="card-actions">
         <div 
-          class="download-btn"
-          @click="$emit('download-card', card)"
-        >
-          <i class="fas fa-download"></i>
-        </div>
-        <div 
           class="delete-btn"
           @click="$emit('delete-card', index)"
         >
           <i class="fas fa-trash-alt"></i>
         </div>
       </div>
+
+      <!-- 下载按钮 -->
+      <div 
+        class="download-btn"
+        @click.prevent.stop="downloadCard(index)"
+      >
+        <i class="fas fa-download"></i>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import html2canvas from 'html2canvas'
+import { ref, onBeforeUpdate } from 'vue'
+
 export default {
   name: 'CardList',
   props: {
@@ -146,6 +152,72 @@ export default {
     currentFontSize: {
       type: Number,
       default: 16
+    }
+  },
+  setup() {
+    const cardRefs = ref([])
+
+    // 在更新前清空 refs 数组
+    onBeforeUpdate(() => {
+      cardRefs.value = []
+    })
+
+    return {
+      cardRefs
+    }
+  },
+  methods: {
+    async downloadCard(index) {
+      console.log('开始下载卡片:', index)
+      try {
+        const card = this.cardRefs[index]
+        console.log('找到卡片元素:', card)
+        
+        if (!card) {
+          console.error('找不到卡片元素')
+          return
+        }
+
+        // 临时隐藏按钮
+        const buttons = card.querySelectorAll('.download-btn, .delete-btn, .card-actions')
+        buttons.forEach(btn => btn.style.display = 'none')
+
+        try {
+          // 生成图片
+          const canvas = await html2canvas(card, {
+            scale: 4,
+            backgroundColor: null,
+            useCORS: true,
+            allowTaint: true,
+            logging: true,
+            onclone: function(clonedDoc) {
+              // 在克隆的文档中也隐藏按钮
+              const clonedButtons = clonedDoc.querySelectorAll('.download-btn, .delete-btn, .card-actions')
+              clonedButtons.forEach(btn => btn.style.display = 'none')
+            }
+          })
+
+          // 恢复按钮显示
+          buttons.forEach(btn => btn.style.display = '')
+
+          // 创建下载链接
+          const link = document.createElement('a')
+          link.download = `小红书卡片-${Date.now()}.png`
+          link.href = canvas.toDataURL('image/png')
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+        } catch (error) {
+          console.error('生成图片失败:', error)
+          throw error
+        } finally {
+          // 确保按钮恢复显示
+          buttons.forEach(btn => btn.style.display = '')
+        }
+      } catch (error) {
+        console.error('下载卡片失败:', error)
+        alert('下载失败，请重试')
+      }
     }
   },
   computed: {
@@ -209,7 +281,6 @@ export default {
   opacity: 1;
 }
 
-.download-btn,
 .delete-btn {
   width: 32px;
   height: 32px;
@@ -217,17 +288,47 @@ export default {
   display: grid;
   place-items: center;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 107, 107, 0.8);
+  color: white;
   transition: all 0.3s;
 }
 
-.delete-btn {
-  background: rgba(255, 107, 107, 0.8);
+.download-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1a73e8;
+  transition: all 0.3s;
+  opacity: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card:hover .download-btn {
+  opacity: 1;
+}
+
+.download-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(26, 115, 232, 0.4);
+  background: #1a73e8;
   color: white;
 }
 
-.download-btn:hover,
 .delete-btn:hover {
   transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+  background: rgba(255, 107, 107, 1);
+}
+
+.download-btn:active,
+.delete-btn:active {
+  transform: scale(0.95);
 }
 </style> 
