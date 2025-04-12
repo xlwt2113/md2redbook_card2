@@ -11,4 +11,4 @@ npm run dev
 ```
 
 ### 演示
-![](https://raw.githubusercontent.com/xlwt2113/md2redbook_card2/refs/heads/main/public/pic.png)
+![](https://github.com/xlwt2113/md2redbook_card2/blob/main/public/demo.png?raw=true)
