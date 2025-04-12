@@ -308,7 +308,7 @@ export default {
 
 <template>
   <div class="app">
-    <h1 class="tool-title">仟流Card</h1>
+    <h1 class="tool-title">小红书卡片生成器</h1>
     <div class="main-container">
       <div class="editor-section">
         <div class="input-area">

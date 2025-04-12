@@ -1,35 +1,14 @@
-# my_md2card2
+# Markdown转小红书卡多卡片版
 
-This template should help get you started developing with Vue 3 in Vite.
+### 说明
+实现markdown格式的文字转小红书卡片的功能，具有更换主题，更改文字大小及卡片大小等功能
 
-## Recommended IDE Setup
+### 安装方法
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
 ```
-
-### Compile and Hot-Reload for Development
-
-```sh
+npm install
 npm run dev
 ```
 
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+### 演示
+![](https://raw.githubusercontent.com/xlwt2113/md2redbook_card2/refs/heads/main/public/pic.png)
