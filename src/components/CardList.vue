@@ -113,7 +113,7 @@
       <div class="card-actions">
         <div 
           class="delete-btn"
-          @click="$emit('delete-card', index)"
+          @click="emit('delete-card', index)"
         >
           <i class="fas fa-trash-alt"></i>
         </div>
@@ -122,7 +122,7 @@
       <!-- 下载按钮 -->
       <div 
         class="download-btn"
-        @click.prevent.stop="downloadCard(index)"
+        @click.stop="downloadCard(index)"
       >
         <i class="fas fa-download"></i>
       </div>
@@ -130,133 +130,134 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import html2canvas from 'html2canvas'
-import { ref, onBeforeUpdate } from 'vue'
+import { ref, onBeforeUpdate, computed } from 'vue'
 
-export default {
-  name: 'CardList',
-  props: {
-    cards: {
-      type: Array,
-      required: true
-    },
-    currentStyle: {
-      type: String,
-      default: 'default'
-    },
-    currentTextAlign: {
-      type: String,
-      default: 'left'
-    },
-    currentFontSize: {
-      type: Number,
-      default: 16
-    }
+// Props 定义
+const props = defineProps({
+  cards: {
+    type: Array,
+    required: true
   },
-  setup() {
-    const cardRefs = ref([])
-
-    // 在更新前清空 refs 数组
-    onBeforeUpdate(() => {
-      cardRefs.value = []
-    })
-
-    return {
-      cardRefs
-    }
+  currentStyle: {
+    type: String,
+    default: 'default'
   },
-  methods: {
-    async downloadCard(index) {
-      console.log('开始下载卡片:', index)
-      try {
-        const card = this.cardRefs[index]
-        console.log('找到卡片元素:', card)
-        
-        if (!card) {
-          console.error('找不到卡片元素')
-          return
+  currentTextAlign: {
+    type: String,
+    default: 'left'
+  },
+  currentFontSize: {
+    type: Number,
+    default: 16
+  }
+})
+
+// Emits 定义
+const emit = defineEmits(['delete-card'])
+
+// 卡片引用数组
+const cardRefs = ref([])
+
+// 在更新前清空 refs 数组
+onBeforeUpdate(() => {
+  cardRefs.value = []
+})
+
+// 下载卡片方法
+const downloadCard = async (index) => {
+  console.log('点击了下载按钮')
+  console.log('开始下载卡片:', index)
+  console.log('cardRefs:', cardRefs.value)
+  try {
+    const card = cardRefs.value[index]
+    if (!card) {
+      console.error('找不到卡片元素，index:', index)
+      return
+    }
+    console.log('找到卡片元素:', card)
+
+    // 临时隐藏按钮
+    const buttons = card.querySelectorAll('.download-btn, .delete-btn, .card-actions')
+    console.log('找到要隐藏的按钮:', buttons.length, '个')
+    buttons.forEach(btn => btn.style.display = 'none')
+
+    try {
+      console.log('开始生成图片...')
+      // 生成图片
+      const canvas = await html2canvas(card, {
+        scale: 4,
+        backgroundColor: null,
+        useCORS: true,
+        allowTaint: true,
+        logging: true,
+        onclone: function(clonedDoc) {
+          console.log('克隆文档成功')
+          // 在克隆的文档中也隐藏按钮
+          const clonedButtons = clonedDoc.querySelectorAll('.download-btn, .delete-btn, .card-actions')
+          clonedButtons.forEach(btn => btn.style.display = 'none')
         }
+      })
 
-        // 临时隐藏按钮
-        const buttons = card.querySelectorAll('.download-btn, .delete-btn, .card-actions')
-        buttons.forEach(btn => btn.style.display = 'none')
-
-        try {
-          // 生成图片
-          const canvas = await html2canvas(card, {
-            scale: 4,
-            backgroundColor: null,
-            useCORS: true,
-            allowTaint: true,
-            logging: true,
-            onclone: function(clonedDoc) {
-              // 在克隆的文档中也隐藏按钮
-              const clonedButtons = clonedDoc.querySelectorAll('.download-btn, .delete-btn, .card-actions')
-              clonedButtons.forEach(btn => btn.style.display = 'none')
-            }
-          })
-
-          // 恢复按钮显示
-          buttons.forEach(btn => btn.style.display = '')
-
-          // 创建下载链接
-          const link = document.createElement('a')
-          link.download = `小红书卡片-${Date.now()}.png`
-          link.href = canvas.toDataURL('image/png')
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-        } catch (error) {
-          console.error('生成图片失败:', error)
-          throw error
-        } finally {
-          // 确保按钮恢复显示
-          buttons.forEach(btn => btn.style.display = '')
-        }
-      } catch (error) {
-        console.error('下载卡片失败:', error)
-        alert('下载失败，请重试')
-      }
+      console.log('图片生成成功，准备下载')
+      // 创建下载链接
+      const link = document.createElement('a')
+      link.download = `小红书卡片-${Date.now()}.png`
+      link.href = canvas.toDataURL('image/png')
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      console.log('下载完成')
+    } catch (error) {
+      console.error('生成图片失败:', error)
+      throw error
+    } finally {
+      // 确保按钮恢复显示
+      buttons.forEach(btn => btn.style.display = '')
     }
-  },
-  computed: {
-    getStyleIcon() {
-      const icons = {
-        'default': 'fa-quote-right',
-        'cyberpunk': 'fa-microchip',
-        'neon': 'fa-bolt',
-        'glow': 'fa-star',
-        'gradient': 'fa-palette',
-        'dashed': 'fa-fire',
-        'cosmos': 'fa-space-shuttle',
-        'aurora': 'fa-moon',
-        'twilight': 'fa-cloud-moon',
-        'ocean': 'fa-water',
-        'forest': 'fa-tree',
-        'sunset': 'fa-sun'
-      }
-      return icons[this.currentStyle] || 'fa-file-alt'
-    },
-    getIconGradient() {
-      const gradients = {
-        'default': 'linear-gradient(45deg, #6366f1, #8b5cf6)',
-        'cyberpunk': 'linear-gradient(45deg, #ec4899, #6366f1)',
-        'neon': 'linear-gradient(135deg, #00f3ff, #ff00ff)',
-        'glow': 'linear-gradient(45deg, #ff6b6b, #4ecdc4)',
-        'gradient': 'linear-gradient(45deg, #6366f1, #ec4899)',
-        'dashed': 'linear-gradient(45deg, #ffd700, #ff9100)',
-        'aurora': 'linear-gradient(135deg, var(--aurora-green), var(--aurora-blue))',
-        'twilight': 'linear-gradient(135deg, var(--twilight-purple), var(--twilight-pink))',
-        'ocean': 'linear-gradient(135deg, var(--ocean-blue), var(--ocean-teal))',
-        'forest': 'linear-gradient(135deg, var(--forest-green), var(--forest-teal))',
-        'sunset': 'linear-gradient(135deg, var(--sunset-orange), var(--sunset-pink))',
-        'cosmos': 'linear-gradient(135deg, var(--cosmos-blue), var(--cosmos-purple))'
-      }
-      return { background: gradients[this.currentStyle] || gradients['default'] }
-    }
+  } catch (error) {
+    console.error('下载卡片失败:', error)
+    alert('下载失败，请重试')
   }
 }
+
+// 计算属性
+const getStyleIcon = computed(() => {
+  const icons = {
+    'default': 'fa-quote-right',
+    'cyberpunk': 'fa-microchip',
+    'neon': 'fa-bolt',
+    'glow': 'fa-star',
+    'gradient': 'fa-palette',
+    'dashed': 'fa-fire',
+    'cosmos': 'fa-space-shuttle',
+    'aurora': 'fa-moon',
+    'twilight': 'fa-cloud-moon',
+    'ocean': 'fa-water',
+    'forest': 'fa-tree',
+    'sunset': 'fa-sun'
+  }
+  return icons[props.currentStyle] || 'fa-file-alt'
+})
+
+const getIconGradient = computed(() => {
+  const gradients = {
+    'default': 'linear-gradient(45deg, #6366f1, #8b5cf6)',
+    'cyberpunk': 'linear-gradient(45deg, #ec4899, #6366f1)',
+    'neon': 'linear-gradient(135deg, #00f3ff, #ff00ff)',
+    'glow': 'linear-gradient(45deg, #ff6b6b, #4ecdc4)',
+    'gradient': 'linear-gradient(45deg, #6366f1, #ec4899)',
+    'dashed': 'linear-gradient(45deg, #ffd700, #ff9100)',
+    'aurora': 'linear-gradient(135deg, var(--aurora-green), var(--aurora-blue))',
+    'twilight': 'linear-gradient(135deg, var(--twilight-purple), var(--twilight-pink))',
+    'ocean': 'linear-gradient(135deg, var(--ocean-blue), var(--ocean-teal))',
+    'forest': 'linear-gradient(135deg, var(--forest-green), var(--forest-teal))',
+    'sunset': 'linear-gradient(135deg, var(--sunset-orange), var(--sunset-pink))',
+    'cosmos': 'linear-gradient(135deg, var(--cosmos-blue), var(--cosmos-purple))'
+  }
+  return { background: gradients[props.currentStyle] || gradients['default'] }
+})
 </script>
 
 <style scoped>
@@ -308,6 +309,7 @@ export default {
   transition: all 0.3s;
   opacity: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 3;
 }
 
 .card:hover .download-btn {
@@ -321,13 +323,16 @@ export default {
   color: white;
 }
 
+.download-btn:active {
+  transform: scale(0.95);
+}
+
 .delete-btn:hover {
   transform: scale(1.1);
   box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
   background: rgba(255, 107, 107, 1);
 }
 
-.download-btn:active,
 .delete-btn:active {
   transform: scale(0.95);
 }
