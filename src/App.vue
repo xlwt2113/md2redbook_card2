@@ -58,12 +58,14 @@ export default {
       { name: '宇宙', value: 'cosmos' }
     ]
 
+    // 调用AI，实现自动转成markdown格式的小红书文案内容，实现逻辑自己实现
     const convertToMarkdown = async () => {
       isConverting.value = true
       try {
         const formData = new FormData()
         formData.append('news', newsContent.value)
-        const response = await fetch('https://www.qianliuai.com/cgi-api/dify/tools/news_to_md', {
+        //
+        const response = await fetch('https://www.aiurl.com', {
           method: 'POST',
           body: formData
         })
@@ -310,7 +312,7 @@ export default {
     <div class="main-container">
       <div class="editor-section">
         <div class="input-area">
-        <span style="color: white">第一步：输入原始文案</span>
+        <span style="color: white">第一步：输入原始文案（原始文案转md的功能尚未实现）</span>
           <textarea
             v-model="newsContent"
             class="news-input"
