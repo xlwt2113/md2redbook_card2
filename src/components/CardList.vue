@@ -4,10 +4,21 @@
       v-for="(card, index) in cards" 
       :key="index"
       class="card"
-      :class="[currentStyle, { 'cover-card': card.isCover }]"
+      :class="[
+        currentStyle,
+        { 'cover-card': card.isCover },
+        card.isCover && card.bgType === 'style' ? `cover-style-${card.coverStyle}` : ''
+      ]"
       :ref="el => { if (el) cardRefs[index] = el }"
     >
-      <div class="card-content" :class="{ 'cover-card': card.isCover }">
+      <div 
+        class="card-content" 
+        :class="[
+          { 'cover-card': card.isCover },
+          card.isCover && card.bgType === 'style' ? `cover-style-${card.coverStyle}` : ''
+        ]"
+        :style="getCardStyle(card)"
+      >
         <!-- 普通卡片内容 -->
         <template v-if="!card.isCover">
           <div class="card-header">
@@ -258,6 +269,37 @@ const getIconGradient = computed(() => {
   }
   return { background: gradients[props.currentStyle] || gradients['default'] }
 })
+
+// 添加获取卡片样式的方法
+const getCardStyle = (card) => {
+  if (!card.isCover || card.bgType !== 'color') {
+    return {}
+  }
+
+  if (card.bgStyle === 'solid') {
+    return {
+      background: `rgba(${hexToRgb(card.bgColor)}, ${card.bgOpacity})`
+    }
+  } else {
+    if (card.gradientDirection === 'circle') {
+      return {
+        background: `radial-gradient(circle, ${card.gradientColor1}, ${card.gradientColor2})`
+      }
+    } else {
+      return {
+        background: `linear-gradient(${card.gradientDirection}, ${card.gradientColor1}, ${card.gradientColor2})`
+      }
+    }
+  }
+}
+
+// 添加 hexToRgb 辅助函数
+const hexToRgb = (hex) => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return result
+    ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+    : null
+}
 </script>
 
 <style scoped>
@@ -266,8 +308,114 @@ const getIconGradient = computed(() => {
   flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
+/* 添加卡片基础样式 */
+.card {
+  width: 280px !important;
+  min-width: 280px;
+  max-width: 280px;
+  height: 373px;
+  flex: 0 0 280px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 25px;
+  padding: 3px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+  background-clip: padding-box;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 3px solid transparent;
+  box-sizing: border-box;
+}
+
+.card-content {
+  position: relative;
+  width: 100%;
+  height: 367px;
+  border-radius: 22px;
+  padding: 20px;
+  font-size: 16px;
+  background: rgba(255,255,255,0.95);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* 封面卡片基础样式 */
+.cover-card {
+  width: 100% !important;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+.cover-title {
+  font-size: 2.5em;
+  font-weight: 700;
+  margin-bottom: 15px;
+  text-align: center;
+  color: white;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  font-family: 'Noto Serif SC', serif;
+  max-width: 90%;
+  line-height: 1.3;
+  position: relative;
+  z-index: 1;
+}
+
+.cover-subtitle {
+  font-size: 1.2em;
+  font-weight: 400;
+  margin-bottom: 20px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 80%;
+  line-height: 1.5;
+  font-family: 'Noto Sans SC', sans-serif;
+  position: relative;
+  z-index: 1;
+}
+
+.cover-icon {
+  font-size: 3em;
+  margin-bottom: 20px;
+  color: white;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.cover-date {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 0.8em;
+  color: #fff;
+  z-index: 1;
+}
+
+.cover-author {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 0.8em;
+  color: #fff;
+  z-index: 1;
+}
+
+/* 操作按钮样式 */
 .card-actions {
   position: absolute;
   top: 10px;
@@ -276,6 +424,7 @@ const getIconGradient = computed(() => {
   gap: 10px;
   opacity: 0;
   transition: opacity 0.3s;
+  z-index: 2;
 }
 
 .card:hover .card-actions {
@@ -336,4 +485,263 @@ const getIconGradient = computed(() => {
 .delete-btn:active {
   transform: scale(0.95);
 }
+
+/* 封面样式 */
+/* 1. 极简主义风格 */
+.cover-style-11 {
+  background: #ffffff !important;
+  position: relative;
+}
+
+.cover-style-11 .cover-title,
+.cover-style-11 .cover-subtitle,
+.cover-style-11 .cover-icon {
+  color: #000000;
+  text-shadow: none;
+}
+
+.cover-style-11::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background: #000;
+  opacity: 0.2;
+}
+
+.cover-style-11::after {
+  content: '';
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background: #000;
+  opacity: 0.2;
+}
+
+/* 2. 大胆现代风格 */
+.cover-style-12 {
+  background: #0f0f0f !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover-style-12::before {
+  content: '';
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  background: #ff2d55;
+  top: -30px;
+  right: -30px;
+  border-radius: 50%;
+  opacity: 0.8;
+  z-index: 0;
+}
+
+.cover-style-12::after {
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: #00f2fe;
+  bottom: -20px;
+  left: -20px;
+  border-radius: 50%;
+  opacity: 0.8;
+  z-index: 0;
+}
+
+/* 3. 优雅复古风格 */
+.cover-style-13 {
+  background: #f8f3e9 !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover-style-13 .cover-title,
+.cover-style-13 .cover-subtitle,
+.cover-style-13 .cover-icon {
+  color: #5c3d2e;
+  text-shadow: none;
+}
+
+.cover-style-13::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="none" stroke="%23a67c52" stroke-width="0.5" stroke-opacity="0.2"/></svg>');
+  opacity: 0.3;
+}
+
+/* 太空金属风 */
+.cover-style-18 {
+  background: #36454F !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover-style-18::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle at 70% 20%, #FFD700 0%, transparent 25%);
+  opacity: 0.6;
+}
+
+/* 学术蓝 - 考研主题 */
+.cover-style-19 {
+  background: linear-gradient(135deg, #e6f7ff, #bae7ff, #91d5ff) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover-style-19 .cover-title,
+.cover-style-19 .cover-subtitle,
+.cover-style-19 .cover-icon {
+  color: #0050b3;
+  text-shadow: none;
+}
+
+.cover-style-19::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><rect width="20" height="20" fill="none"/><path d="M10,2 L18,8 L14,8 L14,16 L6,16 L6,8 L2,8 L10,2 Z" fill="%231890ff" fill-opacity="0.1"/></svg>');
+  opacity: 0.3;
+}
+
+/* 活力橙 - 教育主题 */
+.cover-style-20 {
+  background: #fff9e6 !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover-style-20 .cover-title,
+.cover-style-20 .cover-subtitle,
+.cover-style-20 .cover-icon {
+  color: #fa8c16;
+  text-shadow: none;
+}
+
+.cover-style-20::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(90deg, #ffd666, #ffa940, #fa8c16);
+}
+
+.cover-style-20::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(90deg, #ffd666, #ffa940, #fa8c16);
+}
+
+/* 清新绿 - 学习主题 */
+.cover-style-21 {
+  background: #f6ffed !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover-style-21 .cover-title,
+.cover-style-21 .cover-subtitle,
+.cover-style-21 .cover-icon {
+  color: #389e0d;
+  text-shadow: none;
+}
+
+.cover-style-21::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(82, 196, 26, 0.2);
+}
+
+.cover-style-21::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  left: -30px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(82, 196, 26, 0.15);
+}
+
+/* 方格纸 - 学习笔记主题 */
+.cover-style-22 {
+  background-color: #fffbe6 !important;
+  background-image: linear-gradient(#fadb14 1px, transparent 1px),
+                    linear-gradient(90deg, #fadb14 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: -1px -1px;
+  position: relative;
+}
+
+.cover-style-22 .cover-title,
+.cover-style-22 .cover-subtitle,
+.cover-style-22 .cover-icon {
+  color: #ad8b00;
+  text-shadow: none;
+}
+
+.cover-style-22::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 0;
+}
+
+/* 考研金 - 考研主题 */
+.cover-style-23 {
+  background: #000000 !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover-style-23 .cover-title {
+  color: #faad14;
+}
+
+.cover-style-23::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 8em;
+  font-weight: 900;
+  color: #faad14;
+  opacity: 0.2;
+  z-index: 0;
+}
+
+/* 继续添加其他样式... */
 </style> 
