@@ -310,6 +310,7 @@ export default {
     <div class="main-container">
       <div class="editor-section">
         <div class="input-area">
+        <span style="color: white">第一步：输入原始文案</span>
           <textarea
             v-model="newsContent"
             class="news-input"
@@ -325,6 +326,7 @@ export default {
         </div>
         <div class="markdown-area">
           <div class="input-wrapper">
+          <span style="color: white">第二步：优化MarkDown内容</span>
             <textarea
               v-model="markdownContent"
               class="markdown-editor"
@@ -360,6 +362,7 @@ export default {
         </div>
       </div>
       <div class="card-container">
+      <div style="color: white; text-align: center;">卡片预览区</div>
         <card-list
           :cards="cards"
           :currentStyle="currentStyle"

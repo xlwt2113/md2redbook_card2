@@ -61,6 +61,12 @@
           <div class="cover-editor-section">
             <div class="cover-editor-section-title">封面标题</div>
             <div class="cover-font-controls-wrapper">
+              <input 
+                type="text"
+                class="cover-input"
+                v-model="coverData.title"
+                placeholder="请输入标题..."
+              >
               <div class="cover-font-controls">
                 <select v-model="coverData.titleFont" class="cover-font-family-select">
                   <option v-for="font in fonts" :key="font.value" :value="font.value">
@@ -96,6 +102,12 @@
           <div class="cover-editor-section">
             <div class="cover-editor-section-title">副标题</div>
             <div class="cover-font-controls-wrapper">
+              <input 
+                type="text"
+                class="cover-input"
+                v-model="coverData.subtitle"
+                placeholder="请输入副标题..."
+              >
               <div class="cover-font-controls">
                 <select v-model="coverData.subtitleFont" class="cover-font-family-select">
                   <option v-for="font in fonts" :key="font.value" :value="font.value">
