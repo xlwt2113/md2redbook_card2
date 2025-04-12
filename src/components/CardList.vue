@@ -353,33 +353,39 @@ const hexToRgb = (hex) => {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  padding: 30px;
+  padding: 40px 20px;
   box-sizing: border-box;
+  gap: 15px;
 }
 
 .cover-title {
   font-size: 2.5em;
   font-weight: 700;
-  margin-bottom: 15px;
+  margin: 0;
+  padding: 0 20px;
   text-align: center;
   color: white;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   font-family: 'Noto Serif SC', serif;
-  max-width: 90%;
+  max-width: 100%;
   line-height: 1.3;
   position: relative;
   z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
 }
 
 .cover-subtitle {
   font-size: 1.2em;
   font-weight: 400;
-  margin-bottom: 20px;
+  margin: 0;
   text-align: center;
   color: rgba(255, 255, 255, 0.9);
-  max-width: 80%;
+  max-width: 90%;
   line-height: 1.5;
   font-family: 'Noto Sans SC', sans-serif;
   position: relative;
