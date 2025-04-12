@@ -1,0 +1,107 @@
+:root {
+  --tech-blue: #6366f1;
+  --tech-purple: #8b5cf6;
+  --neon-green: #10b981;
+  --cyber-pink: #ec4899;
+  --neon-cyan: #00f3ff;
+  --glow-yellow: #ffd700;
+  --aurora-green: #4ade80;
+  --aurora-blue: #60a5fa;
+  --sunset-orange: #f97316;
+  --sunset-pink: #fb7185;
+  --ocean-blue: #0ea5e9;
+  --ocean-teal: #14b8a6;
+  --forest-green: #22c55e;
+  --forest-teal: #2dd4bf;
+  --twilight-purple: #a855f7;
+  --twilight-pink: #ec4899;
+  --cosmos-blue: #3b82f6;
+  --cosmos-purple: #8b5cf6;
+  
+  /* 用户提供的颜色 */
+  --light-blue: #E6F0FF;
+  --light-yellow: #FFF9E3;
+  --light-gray: #F5F5F5;
+  --gold: #FFD700;
+  --warning-red: #FF6B6B;
+  --accent-blue: #2E5BFF;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Helvetica Neue', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #1e293b;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  min-height: 100vh;
+}
+
+.tool-title {
+  color: white;
+  text-align: center;
+  margin: 20px 0 30px;
+  font-size: 2.8em;
+  text-shadow: 0 0 15px rgba(99, 102, 241, 0.7);
+  position: relative;
+  display: inline-block;
+  padding: 0 20px;
+}
+
+.tool-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    rgba(99, 102, 241, 0) 0%,
+    #6366f1 50%,
+    rgba(99, 102, 241, 0) 100%
+  );
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+input, select, textarea {
+  font-family: inherit;
+  outline: none;
+  border: none;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--tech-blue);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--tech-purple);
+} 

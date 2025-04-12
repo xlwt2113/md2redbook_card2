@@ -1,0 +1,366 @@
+/* 卡片基础样式 */
+.card {
+  width: 280px;
+  height: 373px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 25px;
+  padding: 3px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+  background-clip: padding-box;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 3px solid transparent;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  margin: -3px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+.card-content {
+  position: relative;
+  z-index: 2;
+  height: 367px;
+  border-radius: 22px;
+  padding: 20px;
+  font-size: 16px;
+  background: rgba(255,255,255,0.95);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 卡片头部 */
+.card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.icon-box {
+  width: 45px;
+  height: 45px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  margin-right: 12px;
+  background: linear-gradient(45deg, var(--tech-blue), var(--tech-purple));
+}
+
+.icon {
+  font-size: 22px;
+  color: white;
+}
+
+h2 {
+  color: #1e293b;
+  margin: 0;
+  font-size: 1.6em;
+  font-weight: 700;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.divider {
+  height: 3px;
+  background: linear-gradient(90deg, var(--tech-blue) 0%, var(--tech-purple) 100%);
+  margin: 15px 0;
+  border-radius: 2px;
+}
+
+/* 卡片内容 */
+.content-item {
+  height: calc(100% - 110px);
+  overflow: hidden;
+  padding: 5px 0;
+}
+
+.text-content {
+  color: #334155;
+  line-height: 1.6;
+  font-size: 16px;
+  font-family: 'Helvetica Neue', system-ui;
+}
+
+.text-content p {
+  margin: 0.8em 0;
+}
+
+.text-content strong {
+  color: var(--tech-blue);
+}
+
+.text-content h1,
+.text-content h2,
+.text-content h3,
+.text-content h4,
+.text-content h5,
+.text-content h6 {
+  text-align: left;
+  margin: 0.8em 0;
+}
+
+/* 卡片样式变体 */
+/* 霓虹风格 */
+.neon {
+  background: linear-gradient(135deg, var(--neon-cyan), var(--cyber-pink), var(--neon-cyan));
+  animation: neon-glow 4s ease infinite;
+  background-size: 300% 300%;
+}
+
+@keyframes neon-glow {
+  0% { background-position: 0% 30%; }
+  50% { background-position: 100% 70%; }
+  100% { background-position: 0% 30%; }
+}
+
+.neon .card-content {
+  background: rgba(16,16,32,0.95);
+}
+
+.neon h2,
+.neon .text-content {
+  color: #e0e0ff;
+}
+
+/* 赛博朋克风格 */
+.cyberpunk {
+  background: linear-gradient(45deg, var(--cyber-pink), var(--tech-purple), var(--tech-blue));
+  animation: cyberpunk-shift 8s ease infinite;
+  background-size: 300% 300%;
+}
+
+@keyframes cyberpunk-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.cyberpunk .card-content {
+  background: rgba(0,0,0,0.95);
+}
+
+.cyberpunk h2,
+.cyberpunk .text-content {
+  color: white;
+}
+
+/* 流光风格 */
+.glow {
+  background: linear-gradient(135deg, #4ecdc4, #ff6b6b);
+}
+
+.glow .card-content {
+  background: rgba(255,255,255,0.95);
+}
+
+/* 渐变风格 */
+.gradient {
+  background: linear-gradient(135deg, var(--tech-blue), var(--tech-purple));
+}
+
+.gradient .card-content {
+  background: rgba(255,255,255,0.95);
+}
+
+/* 脉冲风格 */
+.dashed {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--glow-yellow),
+    var(--glow-yellow) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+  animation: border-scroll 4s linear infinite;
+}
+
+@keyframes border-scroll {
+  0% { background-position: 0 0; }
+  100% { background-position: 40px 0; }
+}
+
+.dashed .card-content {
+  background: rgba(0,0,0,0.9);
+}
+
+.dashed h2 {
+  color: var(--glow-yellow);
+}
+
+.dashed .text-content {
+  color: white;
+}
+
+/* 极光风格 */
+.aurora {
+  background: linear-gradient(135deg, var(--aurora-green), var(--aurora-blue));
+  animation: aurora-flow 8s ease infinite;
+  background-size: 400% 400%;
+}
+
+@keyframes aurora-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.aurora .card-content {
+  background: rgba(10,15,30,0.9);
+}
+
+.aurora h2,
+.aurora .text-content {
+  color: #ffffff;
+}
+
+/* 薄暮风格 */
+.twilight {
+  background: linear-gradient(135deg, var(--twilight-purple), var(--twilight-pink));
+  background-size: 200% 200%;
+}
+
+.twilight .card-content {
+  background: rgba(30,10,40,0.9);
+}
+
+.twilight h2,
+.twilight .text-content {
+  color: #ffffff;
+}
+
+/* 海洋风格 */
+.ocean {
+  background: linear-gradient(135deg, var(--ocean-blue), var(--ocean-teal));
+  animation: ocean-wave 10s ease-in-out infinite;
+  background-size: 300% 300%;
+}
+
+@keyframes ocean-wave {
+  0% { background-position: 0% 30%; }
+  50% { background-position: 100% 70%; }
+  100% { background-position: 0% 30%; }
+}
+
+.ocean .card-content {
+  background: rgba(255,255,255,0.95);
+}
+
+/* 森林风格 */
+.forest {
+  background: linear-gradient(135deg, var(--forest-green), var(--forest-teal));
+}
+
+.forest .card-content {
+  background: rgba(255,255,255,0.95);
+}
+
+/* 日落风格 */
+.sunset {
+  background: linear-gradient(135deg, var(--sunset-orange), var(--sunset-pink));
+  animation: sunset-fade 8s ease infinite;
+  background-size: 200% 200%;
+}
+
+@keyframes sunset-fade {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.sunset .card-content {
+  background: rgba(255,255,255,0.95);
+}
+
+/* 宇宙风格 */
+.cosmos {
+  background: linear-gradient(135deg, var(--cosmos-blue), var(--cosmos-purple));
+  animation: cosmos-spin 12s ease infinite;
+  background-size: 300% 300%;
+}
+
+@keyframes cosmos-spin {
+  0% { background-position: 0% 0%; }
+  25% { background-position: 100% 0%; }
+  50% { background-position: 100% 100%; }
+  75% { background-position: 0% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+.cosmos .card-content {
+  background: rgba(10,10,25,0.95);
+}
+
+.cosmos h2,
+.cosmos .text-content {
+  color: #ffffff;
+}
+
+/* 封面卡片样式 */
+.cover-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 30px;
+}
+
+.cover-title {
+  font-size: 2.5em;
+  font-weight: 700;
+  margin-bottom: 15px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.cover-subtitle {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+  opacity: 0.9;
+}
+
+.cover-icon {
+  font-size: 3em;
+  margin-bottom: 20px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.cover-date,
+.cover-author {
+  position: absolute;
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
+.cover-date {
+  top: 20px;
+  right: 20px;
+}
+
+.cover-author {
+  bottom: 20px;
+  right: 20px;
+}
+
+.cover-quote {
+  font-style: italic;
+  margin: 15px 0;
+  padding: 10px 15px;
+  border-left: 3px solid currentColor;
+  background: rgba(255,255,255,0.1);
+  max-width: 90%;
+  text-align: left;
+} 

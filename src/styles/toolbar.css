@@ -1,0 +1,96 @@
+/* 工具栏容器 */
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  width: 100%;
+}
+
+.toolbar-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* 按钮样式 */
+.style-btn {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  padding: 8px 15px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.style-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  background: white;
+}
+
+.style-btn:active {
+  transform: translateY(0);
+}
+
+.style-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 字体控制 */
+.font-control {
+  background: rgba(255,255,255,0.9);
+  padding: 5px 10px;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* 下载按钮 */
+.download-all-btn {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  padding: 8px 15px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.download-all-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  background: white;
+}
+
+/* 响应式布局 */
+@media screen and (max-width: 768px) {
+  .toolbar {
+    padding: 0 10px;
+  }
+  
+  .toolbar-row {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .style-btn,
+  .download-all-btn {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+} 
